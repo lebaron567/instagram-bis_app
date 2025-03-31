@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../views/auth/login_page.dart';
-import './views/feed/feed_page.dart';
+//import './views/feed/feed_page.dart';
 import './providers/auth_provider.dart';
 
 void main() {
@@ -20,10 +20,10 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/login': (context) => const LoginPage(),
-        '/feed': (context) => const FeedPage(),
+        //'/feed': (context) => const FeedPage(),
         // autres routes...
       },
-      home: isAuthenticated ? const FeedPage() : const LoginPage(),
+      //home: isAuthenticated ? const FeedPage() : const LoginPage(),
     );
   }
 }
