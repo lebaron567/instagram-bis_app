@@ -1,38 +1,39 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   static const baseUrl = 'http://localhost:8080/api/v1/users';
 
-  static Future<String?> login(String email, String password) async {
+  // 📌 Enregistrer l'utilisateur après inscription
+  static Future<bool> register(Map<String, dynamic> userData) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/login'),
+        Uri.parse('$baseUrl/register'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode(userData),
       );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['user_id'].toString(); // simulate token
+      if (response.statusCode == 201) {
+        // 📌 Sauvegarder les infos de l'utilisateur localement
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user', jsonEncode(userData));
+        return true;
       }
-
-      log('Login failed: ${response.statusCode}');
-      return null;
+      return false;
     } catch (e) {
-      log('Exception login: $e');
-      return null;
+      print('Erreur inscription: $e');
+      return false;
     }
   }
 
-  static Future<bool> register(Map<String, dynamic> userData) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(userData), // 👈 ici tu passes un Map, encodé en JSON
-    );
-
-    return response.statusCode == 201;
+  // 📌 Récupérer les infos de l'utilisateur stockées localement
+  static Future<Map<String, dynamic>?> getCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user');
+    if (userData != null) {
+      return jsonDecode(userData);
+    }
+    return null;
   }
 }

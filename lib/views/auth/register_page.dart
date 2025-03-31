@@ -20,28 +20,47 @@ class _RegisterPageState extends State<RegisterPage> {
   bool wantsNotify = true;
   bool isLoading = false;
 
-  void register() async {
+  Future<void> register() async {
     setState(() => isLoading = true);
 
-    final success = await AuthService.register({
-      "email_user": emailController.text,
-      "password_user": passwordController.text,
-      "firstname_user": firstNameController.text,
-      "lastename_user": lastNameController.text,
-      "pseudo_user": pseudoController.text,
-      "birthdate": birthdateController.text,
-      "isprivate_user": isPrivate,
-      "profilpicture_user": "", // Tu peux ajouter un champ d'upload plus tard
-      "wantsnotify_user": wantsNotify,
-    });
+    try {
+      final success = await AuthService.register({
+        "email_user": emailController.text,
+        "password_user": passwordController.text,
+        "firstname_user": firstNameController.text,
+        "lastename_user": lastNameController.text,
+        "pseudo_user": pseudoController.text,
+        "birthdate": birthdateController.text,
+        "isprivate_user": isPrivate,
+        "profilpicture_user": "", // Tu pourras gérer l'upload plus tard
+        "wantsnotify_user": wantsNotify,
+      });
 
-    setState(() => isLoading = false);
+      setState(() => isLoading = false);
 
-    if (success) {
-      //Navigator.pushReplacementNamed(context, '/feed');
-    } else {
+      if (success) {
+        // ✅ Affiche un message avant de rediriger
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Inscription réussie 🎉")),
+        );
+
+        // ✅ Petite attente avant de rediriger
+        await Future.delayed(const Duration(seconds: 1));
+
+        // ✅ Redirection vers Feed
+        if (mounted) {
+         Navigator.of(context).pushReplacementNamed('/feed');
+        }
+
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Inscription échouée ❌")),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Inscription échouée")),
+        SnackBar(content: Text("Erreur : ${e.toString()}")),
       );
     }
   }
@@ -73,7 +92,9 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: isLoading ? null : register,
-              child: isLoading ? const CircularProgressIndicator() : const Text("S'inscrire"),
+              child: isLoading
+                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text("S'inscrire"),
             ),
           ],
         ),

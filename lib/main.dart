@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../views/auth/login_page.dart';
-//import './views/feed/feed_page.dart';
 import './providers/auth_provider.dart';
+import 'views/auth/register_page.dart';
+import 'views/feed/feed.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -18,12 +19,23 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Instagram Bis',
       debugShowCheckedModeBanner: false,
-      routes: {
-        '/login': (context) => const LoginPage(),
-        //'/feed': (context) => const FeedPage(),
-        // autres routes...
+      initialRoute: isAuthenticated ? '/feed' : '/login', // Affiche la page selon l'état d'authentification
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/register':
+            return MaterialPageRoute(builder: (context) => const RegisterPage());
+          case '/login':
+            return MaterialPageRoute(builder: (context) => const LoginPage());
+          case '/feed':
+            return MaterialPageRoute(builder: (context) => FeedPage()); 
+          default:
+            return MaterialPageRoute(
+              builder: (context) => const Scaffold(
+                body: Center(child: Text("404 - Page introuvable")),
+              ),
+            );
+        }
       },
-      //home: isAuthenticated ? const FeedPage() : const LoginPage(),
     );
   }
 }
