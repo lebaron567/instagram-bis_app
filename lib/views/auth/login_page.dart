@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../service/auth_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/auth_provider.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isLoading = false;
@@ -16,21 +17,15 @@ class _LoginPageState extends State<LoginPage> {
   void login() async {
     setState(() => isLoading = true);
 
-    final success = await AuthService.login(
-      emailController.text,
-      passwordController.text,
-    );
+    // Simule un délai de réponse
+    await Future.delayed(const Duration(seconds: 1));
+
+    // Appelle l'action de login depuis le provider
+    await ref.read(authProvider.notifier).login();
 
     setState(() => isLoading = false);
 
-    if (success) {
-      // Navigue vers le feed ou dashboard
-      Navigator.pushReplacementNamed(context, '/feed');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login failed")),
-      );
-    }
+    Navigator.pushReplacementNamed(context, '/feed');
   }
 
   @override
