@@ -31,11 +31,11 @@ class CustomFooter extends StatelessWidget {
       },
       type: BottomNavigationBarType.fixed,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home)),
-        BottomNavigationBarItem(icon: Icon(Icons.search)),
-        BottomNavigationBarItem(icon: Icon(Icons.add_box)),
-        BottomNavigationBarItem(icon: Icon(Icons.video_collection)),
-        BottomNavigationBarItem(icon: Icon(Icons.person)),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'recherche'),
+        BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'creer'),
+        BottomNavigationBarItem(icon: Icon(Icons.video_collection), label: 'reel'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
       ],
     );
   }
