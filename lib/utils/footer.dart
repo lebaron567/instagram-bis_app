@@ -10,14 +10,32 @@ class CustomFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: selectedIndex,
-      onTap: onItemTapped,
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            Navigator.pushReplacementNamed(context, '/feed'); 
+            break;
+          case 1:
+            Navigator.pushReplacementNamed(context, '/search'); 
+            break;
+          case 2:
+            Navigator.pushReplacementNamed(context, '/create'); 
+            break;
+          case 3:
+            Navigator.pushReplacementNamed(context, '/videos'); 
+            break;
+          case 4:
+            Navigator.pushReplacementNamed(context, '/profile'); 
+            break;
+        }
+      },
       type: BottomNavigationBarType.fixed,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Recherche'),
-        BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'Ajouter'),
-        BottomNavigationBarItem(icon: Icon(Icons.video_collection), label: 'Reels'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+        BottomNavigationBarItem(icon: Icon(Icons.home)),
+        BottomNavigationBarItem(icon: Icon(Icons.search)),
+        BottomNavigationBarItem(icon: Icon(Icons.add_box)),
+        BottomNavigationBarItem(icon: Icon(Icons.video_collection)),
+        BottomNavigationBarItem(icon: Icon(Icons.person)),
       ],
     );
   }
