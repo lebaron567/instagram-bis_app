@@ -35,4 +35,12 @@ class ApiService {
   }
 
   // Ajoutez d'autres méthodes pour interagir avec votre API
+
+  //createPost (String userId, String content, String imageUrl)
+  //getPosts()
+  //getPostById(String postId)
+  //deletePost(String postId)
+  //addComment(String postId, String userId, String content)
+  //getComments(String postId)
+  //deleteComment(String commentId)
 }
