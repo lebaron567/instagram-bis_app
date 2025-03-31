@@ -26,18 +26,13 @@ class AuthService {
     }
   }
 
-  static Future<bool> register(String email, String password) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      );
+  static Future<bool> register(Map<String, dynamic> userData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(userData), // 👈 ici tu passes un Map, encodé en JSON
+    );
 
-      return response.statusCode == 201;
-    } catch (e) {
-      log('Exception register: $e');
-      return false;
-    }
+    return response.statusCode == 201;
   }
 }
