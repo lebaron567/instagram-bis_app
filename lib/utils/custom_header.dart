@@ -1,42 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-class Header extends StatelessWidget implements PreferredSizeWidget {
-  final String username;
-
-  const Header({Key? key, required this.username}) : super(key: key);
+class Header extends StatefulWidget implements PreferredSizeWidget {
+  const Header({Key? key}) : super(key: key);
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight); // Définit la taille du header (hauteur de la barre d'application)
+  _HeaderState createState() => _HeaderState();
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}
+
+class _HeaderState extends State<Header> {
+  String _username = "Chargement...";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user');
+    if (userData != null) {
+      final user = jsonDecode(userData);
+      setState(() {
+        _username = user['nom'] ?? "Utilisateur";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Affichage du nom d'utilisateur au centre du header
-          Text(
-            username.isEmpty ? 'Loading...' : username, // Affiche 'Loading...' tant que le nom n'est pas récupéré
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-        ],
+      title: Text(
+        _username, // 📌 Afficher le nom de l'utilisateur connecté
+        style: TextStyle(color: Colors.black),
       ),
+      centerTitle: true,
       actions: [
-        // Bouton de notifications
         IconButton(
           icon: Icon(Icons.notifications_none, color: Colors.black),
-          onPressed: () {
-            // Actions pour les notifications
-          },
+          onPressed: () {},
         ),
-        // Bouton de messages
         IconButton(
           icon: Icon(Icons.message_outlined, color: Colors.black),
-          onPressed: () {
-            // Actions pour les messages
-          },
+          onPressed: () {},
         ),
       ],
     );
