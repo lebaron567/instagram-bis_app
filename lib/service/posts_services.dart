@@ -1,54 +1,75 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
+import '../config/api.dart';
 
-class PostsServices {
+class PostsService {
   final String baseUrl;
 
-  PostsServices({required this.baseUrl});
+  PostsService({this.baseUrl = ApiConfig.baseUrl});
 
-
-  Future<http.Response> createPost(String userId, String content, String imageUrl) async {
+  Future<bool> createPost(String userId, String content, String imageUrl) async {
+    try {
       final response = await http.post(
         Uri.parse('$baseUrl/posts'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
           'userId': userId,
           'content': content,
           'imageUrl': imageUrl,
         }),
       );
-      return response;
+      return response.statusCode == 201;
+    } catch (e) {
+      log('Erreur createPost: $e');
+      return false;
     }
-
-  Future<http.Response> getPosts() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/posts/feed'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-    return response;
   }
 
-  Future<http.Response> getPostById(String postId) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/posts/$postId'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-    return response;
+  Future<List<dynamic>> getPosts() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/posts/feed'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+      log('Erreur getPosts: ${response.statusCode}');
+      return [];
+    } catch (e) {
+      log('Exception getPosts: $e');
+      return [];
+    }
   }
 
-  Future<http.Response> deletePost(String postId) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/posts/$postId'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-    return response;
+  Future<Map<String, dynamic>?> getPostById(String postId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/posts/$postId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+      log('Erreur getPostById: ${response.statusCode}');
+      return null;
+    } catch (e) {
+      log('Exception getPostById: $e');
+      return null;
+    }
+  }
+
+  Future<bool> deletePost(String postId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/posts/$postId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      return response.statusCode == 204;
+    } catch (e) {
+      log('Erreur deletePost: $e');
+      return false;
+    }
   }
 }

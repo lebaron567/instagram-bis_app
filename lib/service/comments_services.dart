@@ -1,43 +1,58 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:developer';
+import '../config/api.dart';
 
-class CommentsServices {
+class CommentsService {
   final String baseUrl;
 
-  CommentsServices({required this.baseUrl});
+  CommentsService({this.baseUrl = ApiConfig.baseUrl});
 
-  Future<http.Response> addComment(String postId, String userId, String content) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/posts/$postId/comments'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'userId': userId,
-        'content': content,
-      }),
-    );
-    return response;
+  Future<bool> addComment(String postId, String userId, String content) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/posts/$postId/comments'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'userId': userId,
+          'content': content,
+        }),
+      );
+      return response.statusCode == 201;
+    } catch (e) {
+      log('Erreur addComment: $e');
+      return false;
+    }
   }
 
-  Future<http.Response> getComments(String postId) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/posts/$postId/comments'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-    return response;
+  Future<List<dynamic>> getComments(String postId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/posts/$postId/comments'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        log('Erreur getComments: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      log('Exception getComments: $e');
+      return [];
+    }
   }
 
-  Future<http.Response> deleteComment(String commentId) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/comments/$commentId'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-    return response;
+  Future<bool> deleteComment(String commentId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/comments/$commentId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      return response.statusCode == 204;
+    } catch (e) {
+      log('Erreur deleteComment: $e');
+      return false;
+    }
   }
-
 }
