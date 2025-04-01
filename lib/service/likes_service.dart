@@ -11,7 +11,7 @@ class LikeService {
   Future<bool> likePost(int postId, int userId) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/posts/$postId/like'),
+        Uri.parse('$baseUrl/like/$postId/like'),
         headers: {
           'Content-Type': 'application/json',
           'User-ID': userId.toString(), // conforme au Swagger
@@ -27,7 +27,7 @@ class LikeService {
   Future<bool> unlikePost(int postId, int userId) async {
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/posts/$postId/like'),
+        Uri.parse('$baseUrl/like/$postId/like'),
         headers: {
           'Content-Type': 'application/json',
           'User-ID': userId.toString(),

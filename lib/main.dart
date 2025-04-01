@@ -5,6 +5,7 @@ import './providers/auth_provider.dart';
 import './views/profile/profile_page.dart';
 import './views/auth/register_page.dart';
 import 'views/feed/feed.dart';
+import 'views/post/create_post.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -27,8 +28,10 @@ class MyApp extends ConsumerWidget {
             return MaterialPageRoute(builder: (context) => const RegisterPage());
           case '/login':
             return MaterialPageRoute(builder: (context) => const LoginPage());
+          case '/createPost':
+            return MaterialPageRoute(builder: (context) => const CreatePostPage());
           case '/feed':
-            return MaterialPageRoute(builder: (context) => FeedPage());
+            return MaterialPageRoute(builder: (context) => const FeedPage());
           case '/profile':
             final args = settings.arguments;
             if (args is Map<String, dynamic> && args.containsKey('userId')) {

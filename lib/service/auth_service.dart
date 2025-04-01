@@ -15,9 +15,11 @@ class AuthService {
       );
 
       if (response.statusCode == 201) {
-        // 📌 Sauvegarder les infos de l'utilisateur localement
+        final userJson =
+            jsonDecode(response.body); // <- réponse réelle du backend
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user', jsonEncode(userData));
+        await prefs.setString(
+            'user', jsonEncode(userJson)); // <- sauvegarde vraie réponse
         return true;
       }
       return false;
@@ -36,4 +38,32 @@ class AuthService {
     }
     return null;
   }
+
+  static Future<bool> login(String email, String password) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user', jsonEncode(data)); // sauvegarde l'utilisateur
+
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    print('Erreur login: $e');
+    return false;
+  }
 }
+
+} 

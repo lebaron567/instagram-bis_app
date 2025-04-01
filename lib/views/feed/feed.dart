@@ -3,6 +3,7 @@ import '../../utils/footer.dart';
 import '../../utils/custom_header.dart';
 import '../../widgets/post_card.dart';
 import '../../service/posts_service.dart';
+import 'dart:developer';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -27,6 +28,8 @@ class _FeedPageState extends State<FeedPage> {
   Future<void> _loadPosts() async {
     try {
       final posts = await _postsService.getPosts();
+      print('📦 Réponse API: $posts'); // ← debug
+
       setState(() {
         _posts = posts;
         _isLoading = false;
@@ -45,12 +48,14 @@ class _FeedPageState extends State<FeedPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: Header(), 
+        child: Header(),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
-              ? Center(child: Text(_errorMessage, style: TextStyle(color: Colors.red)))
+              ? Center(
+                  child:
+                      Text(_errorMessage, style: TextStyle(color: Colors.red)))
               : _posts.isEmpty
                   ? Center(child: Text('Aucun post disponible'))
                   : ListView.builder(
@@ -58,12 +63,17 @@ class _FeedPageState extends State<FeedPage> {
                       itemBuilder: (context, index) {
                         var post = _posts[index];
                         return PostCard(
-                          profileImageUrl: post['userProfileImageUrl'],
-                          username: post['username'],
-                          postImageUrl: post['imageUrl'],
-                          likesCount: post['likesCount'],
-                          commentsCount: post['commentsCount'],
-                          sharesCount: post['sharesCount'],
+                          postId: post['ID'] ?? 0,
+                          userId: post['id_user'] ?? 0,
+                          profileImageUrl:
+                              post['User']?['profilpicture_user'] ?? '',
+                          username: post['User']?['pseudo_user'] ?? 'Inconnu',
+                          postImageUrl:
+                              '', // Tu peux ajouter un champ "image_url" plus tard
+                          likesCount: (post['Likes'] as List?)?.length ?? 0,
+                          commentsCount:
+                              (post['Comments'] as List?)?.length ?? 0,
+                          sharesCount: 0,
                         );
                       },
                     ),

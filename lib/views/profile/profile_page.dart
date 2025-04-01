@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../service/user_service.dart';
 import '../../models/user_model.dart';
+import '../../utils/footer.dart';
 
 class UserProfile extends StatefulWidget {
   final String userId;
@@ -25,9 +26,9 @@ class _UserProfileState extends State<UserProfile> {
 
   Future<void> _loadUser() async {
     try {
-      final data = await _userService.getUser(widget.userId.toString());
+      final data = await _userService.getUser(widget.userId);
       setState(() {
-        user = data != null ? UserModel.fromJson(data) : null;
+        user = data;
         isLoading = false;
       });
     } catch (e) {
@@ -98,6 +99,10 @@ class _UserProfileState extends State<UserProfile> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: CustomFooter(
+        selectedIndex: 0,
+        onItemTapped: (index) {},
       ),
     );
   }

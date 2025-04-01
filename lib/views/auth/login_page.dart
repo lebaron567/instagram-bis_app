@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/auth_provider.dart';
+import '../../service/auth_service.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -17,15 +17,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void login() async {
     setState(() => isLoading = true);
 
-    // Simule un délai de réponse
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Appelle l'action de login depuis le provider
-    await ref.read(authProvider.notifier).login();
+    final success = await AuthService.login(
+      emailController.text,
+      passwordController.text,
+    );
 
     setState(() => isLoading = false);
 
-    Navigator.pushReplacementNamed(context, '/feed');
+    if (success) {
+      Navigator.pushReplacementNamed(context, '/feed');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email ou mot de passe invalide")),
+      );
+    }
   }
 
   @override
@@ -37,12 +42,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text("Login", style: TextStyle(fontSize: 24)),
-            TextField(controller: emailController, decoration: const InputDecoration(labelText: "Email")),
-            TextField(controller: passwordController, obscureText: true, decoration: const InputDecoration(labelText: "Password")),
+            TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: "Email")),
+            TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: "Password")),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: isLoading ? null : login,
-              child: isLoading ? const CircularProgressIndicator() : const Text("Login"),
+              child: isLoading
+                  ? const CircularProgressIndicator()
+                  : const Text("Login"),
             ),
             TextButton(
               onPressed: () => Navigator.pushNamed(context, '/register'),
