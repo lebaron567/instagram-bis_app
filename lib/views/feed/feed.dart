@@ -27,7 +27,7 @@ class _FeedPageState extends State<FeedPage> {
   Future<void> _loadPosts() async {
     try {
       final posts = await _postsService.getPosts();
-      print('📦 Réponse API: $posts'); // ← debug
+  
 
       setState(() {
         _posts = posts;
