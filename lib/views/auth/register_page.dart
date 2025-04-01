@@ -11,23 +11,56 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final pseudoController = TextEditingController();
+  final birthdateController = TextEditingController();
+
+  bool isPrivate = false;
+  bool wantsNotify = true;
   bool isLoading = false;
 
-  void register() async {
+  Future<void> register() async {
     setState(() => isLoading = true);
 
-    final success = await AuthService.register(
-      emailController.text,
-      passwordController.text,
-    );
+    try {
+      final success = await AuthService.register({
+        "email_user": emailController.text,
+        "password_user": passwordController.text,
+        "firstname_user": firstNameController.text,
+        "lastename_user": lastNameController.text,
+        "pseudo_user": pseudoController.text,
+        "birthdate": birthdateController.text,
+        "isprivate_user": isPrivate,
+        "profilpicture_user": "", // Tu pourras gérer l'upload plus tard
+        "wantsnotify_user": wantsNotify,
+      });
 
-    setState(() => isLoading = false);
+      setState(() => isLoading = false);
 
-    if (success) {
-      Navigator.pushReplacementNamed(context, '/feed');
-    } else {
+      if (success) {
+        // ✅ Affiche un message avant de rediriger
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Inscription réussie 🎉")),
+        );
+
+        // ✅ Petite attente avant de rediriger
+        await Future.delayed(const Duration(seconds: 1));
+
+        // ✅ Redirection vers Feed
+        if (mounted) {
+         Navigator.of(context).pushReplacementNamed('/feed');
+        }
+
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Inscription échouée ❌")),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Inscription échouée")),
+        SnackBar(content: Text("Erreur : ${e.toString()}")),
       );
     }
   }
@@ -37,16 +70,31 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: ListView(
           children: [
             const Text("Inscription", style: TextStyle(fontSize: 24)),
+            TextField(controller: lastNameController, decoration: const InputDecoration(labelText: "Nom")),
+            TextField(controller: firstNameController, decoration: const InputDecoration(labelText: "Prénom")),
             TextField(controller: emailController, decoration: const InputDecoration(labelText: "Email")),
+            TextField(controller: pseudoController, decoration: const InputDecoration(labelText: "Pseudo")),
+            TextField(controller: birthdateController, decoration: const InputDecoration(labelText: "Date de naissance (YYYY-MM-DD)")),
             TextField(controller: passwordController, obscureText: true, decoration: const InputDecoration(labelText: "Mot de passe")),
+            SwitchListTile(
+              title: const Text("Profil privé"),
+              value: isPrivate,
+              onChanged: (val) => setState(() => isPrivate = val),
+            ),
+            SwitchListTile(
+              title: const Text("Recevoir des notifications"),
+              value: wantsNotify,
+              onChanged: (val) => setState(() => wantsNotify = val),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: isLoading ? null : register,
-              child: isLoading ? const CircularProgressIndicator() : const Text("S'inscrire"),
+              child: isLoading
+                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text("S'inscrire"),
             ),
           ],
         ),
