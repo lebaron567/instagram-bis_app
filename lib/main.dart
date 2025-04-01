@@ -7,11 +7,9 @@ import './views/auth/register_page.dart';
 import 'views/feed/feed.dart';
 import 'views/post/create_post.dart';
 
-
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
-
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -23,34 +21,39 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Instagram Bis',
       debugShowCheckedModeBanner: false,
-      initialRoute: isAuthenticated
-          ? '/feed'
-          : '/login', 
+      initialRoute: isAuthenticated ? '/feed' : '/login',
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/register':
-            return MaterialPageRoute(
-                builder: (context) => const RegisterPage());
+            return MaterialPageRoute(builder: (context) => const RegisterPage());
           case '/login':
             return MaterialPageRoute(builder: (context) => const LoginPage());
           case '/createPost':
-            return MaterialPageRoute(builder: (context) => CreatePostPage());
+            return MaterialPageRoute(builder: (context) => const CreatePostPage());
           case '/feed':
-            return MaterialPageRoute(builder: (context) => FeedPage());
+            return MaterialPageRoute(builder: (context) => const FeedPage());
           case '/profile':
-            final args = settings.arguments as Map<String, dynamic>;
-            final userId = args['userId'] as String;
-            return MaterialPageRoute(
-              builder: (context) => UserProfile(userId: userId),
-            );
+            final args = settings.arguments;
+            if (args is Map<String, dynamic> && args.containsKey('userId')) {
+              final userId = args['userId'] as String;
+              return MaterialPageRoute(
+                builder: (context) => UserProfile(userId: userId),
+              );
+            } else {
+              return _errorRoute();
+            }
           default:
-            return MaterialPageRoute(
-              builder: (context) => const Scaffold(
-                body: Center(child: Text("404 - Page introuvable")),
-              ),
-            );
+            return _errorRoute();
         }
       },
+    );
+  }
+
+  MaterialPageRoute _errorRoute() {
+    return MaterialPageRoute(
+      builder: (context) => const Scaffold(
+        body: Center(child: Text("404 - Page introuvable")),
+      ),
     );
   }
 }
