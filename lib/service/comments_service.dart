@@ -11,7 +11,7 @@ class CommentsService {
   Future<bool> addComment(String postId, String userId, String content) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/posts/$postId/comments'),
+        Uri.parse('$baseUrl/comment/$postId/comments'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'userId': userId,
@@ -28,7 +28,7 @@ class CommentsService {
   Future<List<dynamic>> getComments(String postId) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/posts/$postId/comments'),
+        Uri.parse('$baseUrl/comment/$postId/comments'),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
