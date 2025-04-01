@@ -32,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
         "pseudo_user": pseudoController.text,
         "birthdate": birthdateController.text,
         "isprivate_user": isPrivate,
-        "profilpicture_user": "", // Tu pourras gérer l'upload plus tard
+        "profilpicture_user": "", 
         "wantsnotify_user": wantsNotify,
       });
 

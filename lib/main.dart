@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/views/search/search_page.dart';
+import 'package:flutter_application_1/views/video/video_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../views/auth/login_page.dart';
 import './providers/auth_provider.dart';
@@ -37,6 +39,10 @@ class MyApp extends ConsumerWidget {
             return MaterialPageRoute(builder: (context) => CreatePostPage());
           case '/feed':
             return MaterialPageRoute(builder: (context) => FeedPage());
+          case '/video':
+            return MaterialPageRoute(builder: (context) => VideoPage());
+          case '/search':
+            return MaterialPageRoute(builder: (context) => SearchPage());
           case '/profile':
             final args = settings.arguments as Map<String, dynamic>;
             final userId = args['userId'] as String;

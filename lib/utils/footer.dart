@@ -27,7 +27,7 @@ class _CustomFooterState extends State<CustomFooter> {
   Future<void> _loadUserId() async {
     final user = await AuthService.getCurrentUser();
     setState(() {
-      userId = user?['id']?.toString(); // ou 'user_id'
+      userId = user?['id']?.toString(); 
     });
   }
 
@@ -47,7 +47,7 @@ class _CustomFooterState extends State<CustomFooter> {
             Navigator.pushNamed(context, '/createPost');
             break;
           case 3:
-            Navigator.pushReplacementNamed(context, '/videos');
+            Navigator.pushReplacementNamed(context, '/video');
             break;
           case 4:
             if (userId != null) {

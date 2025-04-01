@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../utils/custom_header.dart';
 import '../../utils/footer.dart';
-
+import 'package:permission_handler/permission_handler.dart'; 
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -16,12 +16,39 @@ class _CreatePostPageState extends State<CreatePostPage> {
   File? _image;
   final TextEditingController _captionController = TextEditingController();
 
+  Future<bool> _requestPermission(Permission permission) async {
+    final status = await permission.request();
+    return status.isGranted;
+  }
+
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+    if (source == ImageSource.camera) {
+      if (await _requestPermission(Permission.camera)) {
+        final pickedFile = await ImagePicker().pickImage(source: source);
+        if (pickedFile != null) {
+          setState(() {
+            _image = File(pickedFile.path);
+          });
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Permission caméra refusée.")),
+        );
+      }
+    } else if (source == ImageSource.gallery) {
+      if (await _requestPermission(Permission.photos)) {
+        final pickedFile = await ImagePicker().pickImage(source: source);
+        if (pickedFile != null) {
+          setState(() {
+            _image = File(pickedFile.path);
+          });
+        }
+      } else {
+        // Si la permission est refusée, affiche un message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Permission galerie refusée.")),
+        );
+      }
     }
   }
 
