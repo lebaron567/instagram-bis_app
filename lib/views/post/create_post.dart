@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../utils/custom_header.dart';
+import '../../utils/footer.dart';
+
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -88,6 +90,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: CustomFooter(
+        selectedIndex: 0,
+        onItemTapped: (index) {},
       ),
     );
   }

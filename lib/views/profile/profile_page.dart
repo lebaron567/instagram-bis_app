@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../service/user_service.dart';
+import '../../utils/footer.dart';
+
 
 class UserProfile extends StatefulWidget {
-  final String userId; // ou int, selon ton API
+  final String userId; 
 
   const UserProfile({Key? key, required this.userId}) : super(key: key);
 
@@ -31,7 +33,6 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Future<void> _toggleFollow() async {
-    // Remplace "1" par l'ID du current user
     final success = await _userService.followUser(widget.userId, "1");
     if (success) {
       setState(() => isFollowing = !isFollowing);
@@ -73,9 +74,13 @@ class _UserProfileState extends State<UserProfile> {
               child: Text(isFollowing ? "Unfollow" : "Follow"),
             ),
             const SizedBox(height: 16),
-            const Text("Bio à afficher ici..."), // Tu peux l'ajouter à l'API
+            const Text("Bio à afficher ici..."), 
           ],
         ),
+      ),
+      bottomNavigationBar: CustomFooter(
+         selectedIndex: 0,
+         onItemTapped: (index) {},
       ),
     );
   }
