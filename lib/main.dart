@@ -33,6 +33,12 @@ class MyApp extends ConsumerWidget {
             return MaterialPageRoute(builder: (context) => const LoginPage());
           case '/feed':
             return MaterialPageRoute(builder: (context) => FeedPage());
+          case '/profile':
+            final args = settings.arguments as Map<String, dynamic>;
+            final userId = args['userId'] as String;
+            return MaterialPageRoute(
+              builder: (context) => UserProfile(userId: userId),
+            );
           default:
             return MaterialPageRoute(
               builder: (context) => const Scaffold(

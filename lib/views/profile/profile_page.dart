@@ -1,86 +1,79 @@
 import 'package:flutter/material.dart';
+import '../../service/user_service.dart';
 
 class UserProfile extends StatefulWidget {
-  final Map<String, dynamic> user;
+  final String userId; // ou int, selon ton API
 
-  const UserProfile({Key? key, required this.user}) : super(key: key);
+  const UserProfile({Key? key, required this.userId}) : super(key: key);
 
   @override
-  _UserProfileState createState() => _UserProfileState();
+  State<UserProfile> createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
+  final _userService = UserService();
+  Map<String, dynamic>? user;
+  bool isLoading = true;
   bool isFollowing = false;
 
-  void toggleFollow() {
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final data = await _userService.getUser(widget.userId);
     setState(() {
-      isFollowing = !isFollowing;
+      user = data;
+      isLoading = false;
     });
+  }
+
+  Future<void> _toggleFollow() async {
+    // Remplace "1" par l'ID du current user
+    final success = await _userService.followUser(widget.userId, "1");
+    if (success) {
+      setState(() => isFollowing = !isFollowing);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> posts = widget.user['posts'] ?? [];
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+    if (user == null) return const Center(child: Text("Utilisateur introuvable"));
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.user['username'])),
+      appBar: AppBar(title: Text(user!['pseudo_user'] ?? 'Profil')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: NetworkImage(widget.user['avatar']),
+                  backgroundImage: NetworkImage(user!['profilpicture_user'] ?? ''),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.user['username'],
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text("${widget.user['followers']} Followers", style: TextStyle(fontWeight: FontWeight.bold)),
-                        SizedBox(width: 16),
-                        Text("${widget.user['following']} Following", style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Text(widget.user['bio'], style: TextStyle(color: Colors.grey)),
+                    Text(user!['pseudo_user'] ?? '',
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Text(user!['email_user'] ?? '', style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: toggleFollow,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isFollowing ? Colors.white : Colors.blue,
-                foregroundColor: isFollowing ? Colors.black : Colors.white,
-                side: BorderSide(color: Colors.blue),
-              ),
-              child: Text(isFollowing ? 'Unfollow' : 'Follow'),
+              onPressed: _toggleFollow,
+              child: Text(isFollowing ? "Unfollow" : "Follow"),
             ),
-            SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
-                ),
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  return Image.network(posts[index], fit: BoxFit.cover);
-                },
-              ),
-            ),
+            const SizedBox(height: 16),
+            const Text("Bio à afficher ici..."), // Tu peux l'ajouter à l'API
           ],
         ),
       ),
