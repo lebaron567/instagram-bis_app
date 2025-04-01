@@ -1,31 +1,62 @@
 import 'package:flutter/material.dart';
+import '../../service/auth_service.dart';
 
-class CustomFooter extends StatelessWidget {
+class CustomFooter extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
-  const CustomFooter({super.key, required this.selectedIndex, required this.onItemTapped});
+  const CustomFooter({
+    super.key,
+    required this.selectedIndex,
+    required this.onItemTapped,
+  });
+
+  @override
+  State<CustomFooter> createState() => _CustomFooterState();
+}
+
+class _CustomFooterState extends State<CustomFooter> {
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final user = await AuthService.getCurrentUser();
+    setState(() {
+      userId = user?['id']?.toString(); // ou 'user_id'
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: selectedIndex,
+      currentIndex: widget.selectedIndex,
       onTap: (index) {
         switch (index) {
           case 0:
-            Navigator.pushReplacementNamed(context, '/feed'); 
+            Navigator.pushReplacementNamed(context, '/feed');
             break;
           case 1:
-            Navigator.pushReplacementNamed(context, '/search'); 
+            Navigator.pushReplacementNamed(context, '/search');
             break;
           case 2:
-            Navigator.pushReplacementNamed(context, '/create'); 
+            Navigator.pushReplacementNamed(context, '/create');
             break;
           case 3:
-            Navigator.pushReplacementNamed(context, '/videos'); 
+            Navigator.pushReplacementNamed(context, '/videos');
             break;
           case 4:
-            Navigator.pushReplacementNamed(context, '/profile'); 
+            if (userId != null) {
+              Navigator.pushReplacementNamed(
+                context,
+                '/profile',
+                arguments: {'userId': userId},
+              );
+            }
             break;
         }
       },
