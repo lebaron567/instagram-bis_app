@@ -44,7 +44,7 @@ class _CustomFooterState extends State<CustomFooter> {
             Navigator.pushReplacementNamed(context, '/search');
             break;
           case 2:
-            Navigator.pushReplacementNamed(context, '/create');
+            Navigator.pushNamed(context, '/createPost');
             break;
           case 3:
             Navigator.pushReplacementNamed(context, '/videos');
