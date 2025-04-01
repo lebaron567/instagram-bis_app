@@ -1,16 +1,40 @@
 import 'package:flutter/material.dart';
+import '../../service/auth_service.dart';
 
-class CustomFooter extends StatelessWidget {
+class CustomFooter extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
-  const CustomFooter(
-      {super.key, required this.selectedIndex, required this.onItemTapped});
+  const CustomFooter({
+    super.key,
+    required this.selectedIndex,
+    required this.onItemTapped,
+  });
+
+  @override
+  State<CustomFooter> createState() => _CustomFooterState();
+}
+
+class _CustomFooterState extends State<CustomFooter> {
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final user = await AuthService.getCurrentUser();
+    setState(() {
+      userId = user?['id']?.toString(); // ou 'user_id'
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: selectedIndex,
+      currentIndex: widget.selectedIndex,
       onTap: (index) {
         switch (index) {
           case 0:
@@ -26,14 +50,13 @@ class CustomFooter extends StatelessWidget {
             Navigator.pushReplacementNamed(context, '/videos');
             break;
           case 4:
-            Navigator.pushReplacementNamed(
-              context,
-              '/profile',
-              arguments: {
-                'userId':
-                    '10', // à remplacer par l’ID réel de l’utilisateur connecté
-              },
-            );
+            if (userId != null) {
+              Navigator.pushReplacementNamed(
+                context,
+                '/profile',
+                arguments: {'userId': userId},
+              );
+            }
             break;
         }
       },
@@ -42,8 +65,7 @@ class CustomFooter extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
         BottomNavigationBarItem(icon: Icon(Icons.search), label: 'recherche'),
         BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'creer'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.video_collection), label: 'reel'),
+        BottomNavigationBarItem(icon: Icon(Icons.video_collection), label: 'reel'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
       ],
     );
