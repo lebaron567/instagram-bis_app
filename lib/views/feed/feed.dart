@@ -3,7 +3,6 @@ import '../../utils/footer.dart';
 import '../../utils/custom_header.dart';
 import '../../widgets/post_card.dart';
 import '../../service/posts_service.dart';
-import 'dart:developer';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
