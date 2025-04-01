@@ -4,12 +4,14 @@ import '../views/auth/login_page.dart';
 import './providers/auth_provider.dart';
 import './views/profile/profile_page.dart';
 import './views/auth/register_page.dart';
-import 'views/auth/register_page.dart';
 import 'views/feed/feed.dart';
+import 'views/post/create_post.dart';
+
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
+
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -23,7 +25,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: isAuthenticated
           ? '/feed'
-          : '/login', // Affiche la page selon l'état d'authentification
+          : '/login', 
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/register':
@@ -31,6 +33,8 @@ class MyApp extends ConsumerWidget {
                 builder: (context) => const RegisterPage());
           case '/login':
             return MaterialPageRoute(builder: (context) => const LoginPage());
+          case '/createPost':
+            return MaterialPageRoute(builder: (context) => CreatePostPage());
           case '/feed':
             return MaterialPageRoute(builder: (context) => FeedPage());
           case '/profile':

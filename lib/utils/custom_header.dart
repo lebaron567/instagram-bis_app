@@ -38,7 +38,7 @@ class _HeaderState extends State<Header> {
       backgroundColor: Colors.white,
       elevation: 0,
       title: Text(
-        _username, // 📌 Afficher le nom de l'utilisateur connecté
+        _username, 
         style: TextStyle(color: Colors.black),
       ),
       centerTitle: true,
