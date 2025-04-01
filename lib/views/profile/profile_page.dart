@@ -28,7 +28,7 @@ class _UserProfileState extends State<UserProfile> {
     try {
       final data = await _userService.getUser(widget.userId);
       setState(() {
-        user = data;
+        user = data != null ? UserModel.fromJson(data) : null;
         isLoading = false;
       });
     } catch (e) {
@@ -72,7 +72,8 @@ class _UserProfileState extends State<UserProfile> {
                   radius: 40,
                   child: Text(
                     user!.username[0].toUpperCase(),
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -81,7 +82,8 @@ class _UserProfileState extends State<UserProfile> {
                   children: [
                     Text(
                       user!.username,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
